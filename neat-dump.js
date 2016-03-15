@@ -24,6 +24,8 @@ var d = (function(){
 
         // Set if we are in the Node environment.
         this.hasNode = true;
+        // Set if we are in the Jasmine environment.
+        this.hasJasmine = true;
         // Set if we are in the browser environment.
         this.hasBrowser = true;
         // When set, we don't output anything.
@@ -44,9 +46,15 @@ var d = (function(){
         this.displayFunction = displayEngine;
 
         try {
-            var test = module.id;
+            module.id;
         } catch(e)  {
             this.hasNode = false;
+        }
+
+        try {
+            jasmine;
+        } catch(e)  {
+            this.hasJasmine = false;
         }
 
         // At the moment browser implementation does not require anything special.
@@ -358,7 +366,7 @@ var d = (function(){
             // Helper to raise expectation.
             function passOrRaise(flag, message, actual) {
                 // Make Jasmine happy in case that this is only test inside a case.
-                if (jasmine) {
+                if (d.hasJasmine) {
                     expect(true).toBe(true);
                 }
 
