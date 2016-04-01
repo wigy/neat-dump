@@ -1,0 +1,22 @@
+{
+  "name": "neat-dump",
+  "version": "0.0.0",
+  "description": "Neat multi-purpose tool to display values on browser or console",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wigy/neat-dump.git"
+  },
+  "keywords": [
+    "javascript"
+  ],
+  "author": "Tommi Ronkainen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wigy/neat-dump/issues"
+  },
+  "homepage": "https://github.com/wigy/neat-dump#readme"
+}
