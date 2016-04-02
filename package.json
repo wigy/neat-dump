@@ -1,6 +1,6 @@
 {
   "name": "neat-dump",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Neat multi-purpose tool to display values on browser or console",
   "main": "index.js",
   "scripts": {

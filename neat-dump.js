@@ -37,6 +37,73 @@ var d = (function(){
     }
 
     /**
+     * Convert anything to reasonable string presentation.
+     */
+    function argToString(arg) {
+        // TODO: Mark and detect recustion on objects.
+        // TODO: Detect and fix objects with keys 0..n-1 like in d(document.all)
+        var m;
+        var msg = '';
+        if (arg instanceof Array) {
+            msg += '[';
+            for (m = 0; m < arg.length; m++) {
+                if (m) {
+                    msg += ', ';
+                }
+                msg += argToString(arg[m]);
+            }
+            msg += ']';
+        } else if (arg instanceof Function) {
+            msg = '';
+        } else if (arg instanceof Object && !arg.__class) {
+            msg += '{';
+            var members = Object.getOwnPropertyNames(arg).sort();
+            for (m = 0; m < members.length; m++) {
+                if (arg[members[m]] instanceof Function) {
+                    continue;
+                }
+                if (m) {
+                    msg += ',';
+                }
+                msg += members[m] + ': ';
+                msg += argToString(arg[members[m]]);
+            }
+            msg += '}';
+        } else if (arg instanceof Object && arg.__class) {
+            // Chronicles of Angular has own stringifying methods.
+            // TODO: Maybe check existence of toString?
+            msg += arg.toString();
+        } else {
+            msg += JSON.stringify(arg);
+        }
+        return msg;
+    }
+
+    /**
+     * Convert any argument to string removing quotes, if they are outermost.
+     */
+    function argToUnquotedString(arg) {
+        arg = argToString(arg);
+        arg = arg.replace(/^"(.*)"$/, '$1');
+        arg = arg.replace(/^'(.*)'$/, '$1');
+        return arg;
+    }
+
+    /**
+     * Convert an array of arguments to the space separated string.
+     */
+    function argsToString(args) {
+        var msg = '';
+        for (var i = 0; i < args.length; i++) {
+            if (i) {
+                msg += ' ';
+            }
+            msg += argToUnquotedString(args[i]);
+        }
+        return msg;
+    }
+
+    /**
      * A class wrapping one line of a message to be displayed.
      */
     function DumpMessage() {
@@ -67,8 +134,13 @@ var d = (function(){
      * Actual Dump-utility itself is a function object with additional members.
      */
     var Dump = function(args) {
-        // TODO: Proper implementation.
-        console.log("DUMP:", args, Dump.config);
+
+        var args = Array.prototype.slice.call(arguments);
+        if (args.length === 0) {
+            return;
+        }
+        console.log(argsToString(args));
+        return args[args.length - 1];
     }
 
     Dump.config = new DumpConfig();
