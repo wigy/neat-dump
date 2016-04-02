@@ -11,8 +11,10 @@ var d = (function(){
         this.hasBrowser = true;
         // When set, we don't output anything.
         this.beQuiet = false;
-        // When set, show also stack trace with the values dumped.
-        this.showStack = false;
+        // When set, show the line, which has called dumping.
+        this.showSourceLine = true;
+        // When set, show also full stack trace when values are dumped.
+        this.showFullStack = false;
         // When set, include the time stamp in every line displayed.
         this.showTimestamp = false;
         // A function handling the actual showing of the message.
