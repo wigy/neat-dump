@@ -1,6 +1,6 @@
 # Wigy's Neat Dump
 
-This is simple multi-purpose tool to display values on a browser console or Node terminal.
+This is simple multi-purpose tool to display values to the browser console or to the Node terminal.
 
 ## In the browser
 
