@@ -21,9 +21,9 @@ For example, in your HTML-page, simply use it like
 </html>
 ```
 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/screen-shot.png "Screen shot from console.")
 
-TODO: Sample output here
+TODO: Update sample output.
 
 You can use it in the middle of the expression to dump values, since it returns the value of
 the last argument
