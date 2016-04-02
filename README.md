@@ -21,6 +21,8 @@ For example, in your HTML-page, simply use it like
 </html>
 ```
 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+
 TODO: Sample output here
 
 You can use it in the middle of the expression to dump values, since it returns the value of
