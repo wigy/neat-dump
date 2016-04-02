@@ -9,12 +9,15 @@ For example, in your HTML-page, simply use it like
 ```html
 <html>
   <head>
-    <script src="node_modules/neat-dump/neat-dump.js"></script>
+    <script src="neat-dump.js"></script>
   </head>
-  <script>
-    var obj = {name: "Some Name", value: 1.23};
-    d("Obj value is", obj);
-  </script>
+    <body>
+    See the console...
+    <script>
+      var obj = {name: "Some Name", value: 1.23};
+      d("Obj value is", obj);
+    </script>
+  </body>
 </html>
 ```
 
