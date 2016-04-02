@@ -2,6 +2,13 @@
 
 This is simple multi-purpose tool to display values to the browser console or to the Node terminal.
 
+## Installing
+
+Add it to the project
+```html
+npm install neat-dump --save
+```
+
 ## In the browser
 
 For example, in your HTML-page, simply use it like
@@ -54,10 +61,11 @@ TODO: Document
 
 TODO: Document
 
-## Configuring
+## Configuring and turning it off in production
 
 TODO: Document
 
 ## Using different channels
 
 TODO: Document
+

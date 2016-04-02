@@ -7,20 +7,35 @@ var d = (function(){
 
         // Set if we are in the Node environment.
         this.hasNode = true;
+        // Set if we are in the browser environment.
+        this.hasBrowser = true;
         // When set, we don't output anything.
         this.beQuiet = false;
         // When set, show also stack trace with the values dumped.
         this.showStack = false;
+        // When set, include the time stamp in every line displayed.
+        this.showTimestamp = false;
+        // A function handling the actual showing of the message.
+        this.displayFunction = DumpEngine;
 
         try {
             module.id;
         } catch(e)  {
             this.hasNode = false;
+            this.showTimestamp = true;
+        }
+
+        this.hasBrowser = !this.hasNode;
+
+        if (this.hasBrowser) {
+            this.displayFunction = DumpEngineBrowser;
+        } else if (this.hasNode) {
+            this.displayFunction = DumpEngineNode;
         }
     }
 
     /**
-     * A class wrapping a message to be displayed.
+     * A class wrapping one line of a message to be displayed.
      */
     function DumpMessage() {
     }
@@ -56,10 +71,10 @@ var d = (function(){
 
     Dump.config = new DumpConfig();
 
-    // Export it. TODO: Move inside after env-detection there.
-    if (Dump.config.hasNode) {
-        module.exports = Dump;
-    }
-
     return Dump;
 })();
+
+// Export it for Node.
+if (d.config.hasNode) {
+    module.exports = d;
+}
