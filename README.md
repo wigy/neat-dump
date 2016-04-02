@@ -52,6 +52,10 @@ TODO: Document
 
 TODO: Document
 
-## It is Configurable
+## Configuring
+
+TODO: Document
+
+## Using different channels
 
 TODO: Document
