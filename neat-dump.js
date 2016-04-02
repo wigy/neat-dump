@@ -17,6 +17,8 @@ var d = (function(){
         this.showFullStack = false;
         // When set, include the time stamp in every line displayed.
         this.showTimestamp = false;
+        // When set, show also functions.
+        this.showFunctions = false;
         // A function handling the actual showing of the message.
         this.displayFunction = DumpEngine;
 
@@ -54,6 +56,7 @@ var d = (function(){
             }
             msg += ']';
         } else if (arg instanceof Function) {
+            // TODO: If the showFunction flag is set...
             msg = '';
         } else if (arg instanceof Object && !arg.__class) {
             msg += '{';
@@ -63,7 +66,7 @@ var d = (function(){
                     continue;
                 }
                 if (m) {
-                    msg += ',';
+                    msg += ', ';
                 }
                 msg += members[m] + ': ';
                 msg += argToString(arg[members[m]]);
@@ -133,8 +136,7 @@ var d = (function(){
     /**
      * Actual Dump-utility itself is a function object with additional members.
      */
-    var Dump = function(args) {
-
+    var Dump = function() {
         var args = Array.prototype.slice.call(arguments);
         if (args.length === 0) {
             return;
