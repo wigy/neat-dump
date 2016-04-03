@@ -5,6 +5,7 @@ This is a tool to display logging messages and debugging values to the browser c
 ## Installing
 
 Add it to the project
+
 ```html
 npm install neat-dump --save
 ```
@@ -16,7 +17,7 @@ For example, in your HTML-page, simply use it like
 ```html
 <html>
   <head>
-    <script src="neat-dump.js"></script>
+    <script src="node_modules/neat-dump/neat-dump.js"></script>
   </head>
     <body>
     See the console...
@@ -32,6 +33,7 @@ For example, in your HTML-page, simply use it like
 
 You can use it in the middle of the expression to dump values, since it returns the value of
 the last argument
+
 ```js
    var a = 2, b = 3;
    result = Math.sqrt(d(a * a + b * b));
@@ -42,6 +44,7 @@ the last argument
 ## It has different message levels
 
 By default the message is debug message. However also other levels of messages are supported.
+
 ```js
     d("Value of the PI is", Math.PI);
     d("Dumping configuration is", d.config);
@@ -49,6 +52,7 @@ By default the message is debug message. However also other levels of messages a
     d.warning("This is a warning message.");
     d.error("This is an error message.");
 ```
+
 ![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-browser-levels.png "Screen shot from console.")
 
 In addition, one can use `d.fatal()` to throw an exception in addition to showing the message.
@@ -57,6 +61,7 @@ In addition, one can use `d.fatal()` to throw an exception in addition to showin
 
 You can load it as a Node-module and use it to display values on the terminal running the
 Node-application:
+
 ```js
     var d = require('node_modules/neat-dump/neat-dump.js');
 
@@ -72,9 +77,11 @@ Node-application:
 ## Configuring and turning it off in production
 
 The utility is configurable. You can mute it completely for the production use for example:
+
 ```js
     d.config.beQuiet = true;
 ```
+
 The configuration has also some auto-detected flags. The `d.config` has
 
 * `hasNode` - Set if we are in the Node environment.
@@ -145,3 +152,7 @@ d.expect(function(){
     /* No messages */
 }).not.toHaveMessages();
 ```
+
+## Future Ideas
+
+* Add automatic support for https://github.com/CodeSeven/toastr in browser.

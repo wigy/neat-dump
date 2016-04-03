@@ -63,7 +63,7 @@ var d = (function(){
      * Convert anything to reasonable string presentation.
      */
     function argToString(arg) {
-        // TODO: Mark and detect recustion on objects like in d(document)
+        // TODO: Mark and detect recusrsion on objects like in d(document)
         // TODO: Detect and fix objects with keys 0..n-1 like in d(document.all)
         var m;
         var msg = '';
@@ -79,24 +79,25 @@ var d = (function(){
         } else if (arg instanceof Function) {
             // TODO: If the showFunction flag is set...
             msg = '';
-        } else if (arg instanceof Object && !arg.__class) {
-            msg += '{';
-            var members = Object.getOwnPropertyNames(arg).sort();
-            for (m = 0; m < members.length; m++) {
-                if (arg[members[m]] instanceof Function) {
-                    continue;
+        } else if (arg instanceof Object) {
+            // If object has its own implementation, let's use it.
+            if (arg.toString !== ({}).toString) {
+                msg += arg.toString();
+            } else {
+                msg += '{';
+                var members = Object.getOwnPropertyNames(arg).sort();
+                for (m = 0; m < members.length; m++) {
+                    if (arg[members[m]] instanceof Function) {
+                        continue;
+                    }
+                    if (msg !== '{') {
+                        msg += ', ';
+                    }
+                    msg += members[m] + ': ';
+                    msg += argToString(arg[members[m]]);
                 }
-                if (m) {
-                    msg += ', ';
-                }
-                msg += members[m] + ': ';
-                msg += argToString(arg[members[m]]);
+                msg += '}';
             }
-            msg += '}';
-        } else if (arg instanceof Object && arg.__class) {
-            // Chronicles of Angular has own stringifying methods.
-            // TODO: Maybe check existence of toString?
-            msg += arg.toString();
         } else {
             msg += JSON.stringify(arg);
         }
