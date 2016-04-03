@@ -6,4 +6,4 @@ var d = require('./neat-dump')
 d.expect(function(){
     d("Message 1");
     d.info("Message 2");
-});
+}).toHaveMessages();

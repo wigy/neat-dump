@@ -303,10 +303,33 @@ var d = (function(){
     }
 
     /**
-     * Unit-testing utilities.
+     * Unit-testing helpers for dump tool.
      */
-
     function runTest(callback) {
+
+        /**
+         * An expectation class.
+         */
+        function DumpExpectation(messages, negated) {
+
+            if (!negated) {
+                this.not = new DumpExpectation(messages, true);
+            }
+
+            // Helper to raise expectation.
+            this.passOrRaise = function(flag, message) {
+                if (!flag && !negated) {
+                    throw new Error("Dump Expectation Failed: expected to " + message);
+                }
+                if (flag && negated) {
+                    throw new Error("Dump Expectation Failed: expected not to " + message);
+                }
+            }
+            // Test if there are any messages.
+            this.toHaveMessages = function() {
+                this.passOrRaise(messages.length > 0, "have some messages");
+            }
+        }
 
         // TODO: A flag debugTesting to display messages also using old display
         // When testing, messages are collected here instead of displaying.
@@ -326,6 +349,7 @@ var d = (function(){
         // TODO: Plan usage scenarios and return value.
         //   Perhaps an object containing messages and some utilityfunctions like
         //   texts() providing a list of plain messages without files.
+        return new DumpExpectation(messages);
     }
 
     /**
