@@ -64,7 +64,10 @@ Node-application:
     d("Our application is starting with the configuration", conf);
 ```
 
-![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-node.png "Screen shot from console.")
+```shell
+ 12:17:04 DEBUG:  ------------- /home/wigy/neat-dump/test-node.js:6:1 -------------
+ 12:17:04 DEBUG:  Our application is starting with the configuration {mode: "debug", port: 2000}
+```
 
 
 ## It can be used in unit-testing

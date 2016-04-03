@@ -2,9 +2,6 @@
 
 var d = require('./neat-dump')
 
-d("Value of the PI is", Math.PI);
-d("Dumping configuration is", d.config);
-d.info("This is an informative message.");
-d.warning("This is a warning message.");
-d.error("This is an error message.");
-// TODO: enable when works: d("Module is", module);
+var conf = {port: 2000, mode: "debug"};
+d("Our application is starting with the configuration", conf);
+// TODO: try out when works: d("Module is", module);
