@@ -33,7 +33,7 @@ var d = (function(){
         // When set, show also functions.
         this.showFunctions = false;
         // A function handling the actual showing of the message.
-        this.displayFunction = DisplayEngine;
+        this.displayFunction = displayEngine;
 
         try {
             var test = module.id;
@@ -44,9 +44,9 @@ var d = (function(){
         this.hasBrowser = !this.hasNode;
 
         if (this.hasBrowser) {
-            this.displayFunction = DisplayEngineBrowser;
+            this.displayFunction = displayEngineBrowser;
         } else if (this.hasNode) {
-            this.displayFunction = DisplayEngineNode;
+            this.displayFunction = displayEngineNode;
             this.showTimestamp = true;
             this.showErrorLevel = true;
         }
@@ -151,14 +151,14 @@ var d = (function(){
     /**
      * Default implementation of actual dumping.
      */
-    function DisplayEngine(msg) {
+    function displayEngine(msg) {
         console.log(msg.prefix + argsToString(msg.args));
     }
 
     /**
      * Dumping implementation for browsers.
      */
-    function DisplayEngineBrowser(msg) {
+    function displayEngineBrowser(msg) {
         var args = msg.args;
         if (msg.prefix !== '') {
             args.unshift(msg.prefix);
@@ -187,14 +187,14 @@ var d = (function(){
     /**
      * Dumping implementation for Node.
      */
-    function DisplayEngineNode(msg) {
-        DisplayEngine(msg);
+    function displayEngineNode(msg) {
+        displayEngine(msg);
     }
 
     /**
      * Actual display handler for dumping values.
      */
-    function Display(level, args) {
+    function display(level, args) {
 
         if (args.length === 0) {
             return;
@@ -229,25 +229,25 @@ var d = (function(){
      */
     var Dump = function() {
         var args = Array.prototype.slice.call(arguments);
-        return Display(level.DEBUG, args);
+        return display(level.DEBUG, args);
     };
 
     Dump.config = new DumpConfig();
     Dump.info = function() {
         var args = Array.prototype.slice.call(arguments);
-        return Display(level.INFO, args);
+        return display(level.INFO, args);
     };
     Dump.warning = function() {
         var args = Array.prototype.slice.call(arguments);
-        return Display(level.WARNING, args);
+        return display(level.WARNING, args);
     };
     Dump.error = function() {
         var args = Array.prototype.slice.call(arguments);
-        return Display(level.ERROR, args);
+        return display(level.ERROR, args);
     };
     Dump.fatal = function() {
         var args = Array.prototype.slice.call(arguments);
-        Display(level.FATAL, args);
+        display(level.FATAL, args);
         throw new Error("FATAL: " + argsToString(args));
     };
 
