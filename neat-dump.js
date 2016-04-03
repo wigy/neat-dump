@@ -317,7 +317,7 @@ var d = (function(){
             }
 
             // Helper to raise expectation.
-            this.passOrRaise = function(flag, message) {
+            function passOrRaise(flag, message) {
                 if (!flag && !negated) {
                     throw new Error("Dump Expectation Failed: expected to " + message);
                 }
@@ -327,7 +327,7 @@ var d = (function(){
             }
             // Test if there are any messages.
             this.toHaveMessages = function() {
-                this.passOrRaise(messages.length > 0, "have some messages");
+                passOrRaise(messages.length > 0, "have some messages");
             }
         }
 
