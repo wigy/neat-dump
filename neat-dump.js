@@ -24,7 +24,6 @@ var d = (function(){
         this.beQuiet = false;
         // When set, show the line, which has called dumping.
         this.showSourceLine = true;
-        // TODO: Implement
         // When set, show also full stack trace when values are dumped.
         this.showStackTrace = false;
         // When set, include the time stamp in every line displayed.
@@ -235,8 +234,18 @@ var d = (function(){
                 prefix += level + ': ';
             }
 
+            // Show the stack trace, if configured.
+            if (Dump.config.showStackTrace) {
+                msg = new DumpMessage(level, prefix, ['-------------------------------------------------------------------']);
+                Dump.config.displayFunction(msg);
+                for (var i = 0; i < stack.length; i++) {
+                    msg = new DumpMessage(level, prefix, [stack[i]]);
+                    Dump.config.displayFunction(msg);
+                }
+            }
+
             // Show the source line, if configured and not showing full stack trace.
-            if (Dump.config.showSourceLine && !Dump.config.showStackTrace) {
+            else if (Dump.config.showSourceLine) {
                 msg = new DumpMessage(level, prefix, ['-------------', caller, '-------------']);
                 Dump.config.displayFunction(msg);
             }
