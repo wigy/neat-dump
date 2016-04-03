@@ -301,6 +301,31 @@ var d = (function(){
     }
 
     /**
+     * Unit-testing utilities.
+     */
+
+    function runTest(callback) {
+
+        // When testing, messages are collected here instead of displaying.
+        var messages = [];
+
+        // Display engine for testing.
+        function displayTesting(msg) {
+            messages.push(msg);
+        }
+
+        var oldDisplay = Dump.config.displayFunction;
+        Dump.config.displayFunction = displayTesting;
+        // TODO: Try/catch/re-raise
+        callback();
+        Dump.config.displayFunction = oldDisplay;
+
+        // TODO: Plan usage scenarios and return value.
+        //   Perhaps an object containing messages and some utilityfunctions like
+        //   texts() providing a list of plain messages without files.
+    }
+
+    /**
      * Dump-utility interface itself is a function object with additional members.
      */
     var Dump = function() {
@@ -328,6 +353,9 @@ var d = (function(){
     };
     Dump.channels = function(config) {
         channels = config;
+    };
+    Dump.test = function(callback) {
+        return runTest(callback);
     };
 
     return Dump;
