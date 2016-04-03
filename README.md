@@ -39,7 +39,21 @@ the last argument
 
 ![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-browser-expressions.png "Screen shot from console.")
 
-## As a Node module
+## It has different message levels
+
+By default the message is debug message. However also other levels of messages are supported.
+```js
+    d("Value of the PI is", Math.PI);
+    d("Dumping configuration is", d.config);
+    d.info("This is an informative message.");
+    d.warning("This is a warning message.");
+    d.error("This is an error message.");
+```
+![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-browser-levels.png "Screen shot from console.")
+
+In addition, one can use `d.fatal()` to throw an exception in addition to showing the message.
+
+## Works in Node
 
 You can load it as a Node-module and use it to display values on the terminal running the
 Node-application:
@@ -52,9 +66,6 @@ Node-application:
 
 ![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-node.png "Screen shot from console.")
 
-## It has different message levels
-
-TODO: Document
 
 ## It can be used in unit-testing
 
