@@ -28,9 +28,7 @@ For example, in your HTML-page, simply use it like
 </html>
 ```
 
-![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/screen-shot.png "Screen shot from console.")
-
-TODO: Update sample output.
+![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-browser-basics.png "Screen shot from console.")
 
 You can use it in the middle of the expression to dump values, since it returns the value of
 the last argument
@@ -39,26 +37,26 @@ the last argument
    result = Math.sqrt(d(a * a + b * b));
 ```
 
-TODO: Sample output here
+![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-browser-expressions.png "Screen shot from console.")
 
 ## As a Node module
 
 You can load it as a Node-module and use it to display values on the terminal running the
 Node-application:
 ```js
-    var conf = {/* Some configuration defintion here */};
     var d = require('node_modules/neat-dump/neat-dump.js');
 
+    var conf = {port: 2000, mode: "debug"};
     d("Our application is starting with the configuration", conf);
 ```
 
-TODO: Sample output here
+![alt text](https://raw.githubusercontent.com/wigy/neat-dump/master/pics/test-node.png "Screen shot from console.")
 
-## It can be used in unit-testing
+## It has different message levels
 
 TODO: Document
 
-## It has different message levels
+## It can be used in unit-testing
 
 TODO: Document
 
