@@ -23,7 +23,7 @@ var d = (function(){
         this.displayFunction = DumpEngine;
 
         try {
-            module.id;
+            var test = module.id;
         } catch(e)  {
             this.hasNode = false;
             this.showTimestamp = true;
@@ -107,6 +107,17 @@ var d = (function(){
     }
 
     /**
+     * Definition of message levels.
+     */
+    var level = {
+        DEBUG: "DEBUG",
+        INFO: "INFO",
+        WARNING: "WARNING",
+        ERROR: "ERROR",
+        FATAL: "FATAL"
+    };
+
+    /**
      * A class wrapping one line of a message to be displayed.
      */
     function DumpMessage() {
@@ -134,10 +145,9 @@ var d = (function(){
     DumpEngineNode.prototype = new DumpEngine();
 
     /**
-     * Actual Dump-utility itself is a function object with additional members.
+     * Actual display handler for dumping values.
      */
-    var Dump = function() {
-        var args = Array.prototype.slice.call(arguments);
+    function Display(level, args) {
         if (args.length === 0) {
             return;
         }
@@ -145,7 +155,32 @@ var d = (function(){
         return args[args.length - 1];
     }
 
+    /**
+     * Dump-utility interface itself is a function object with additional members.
+     */
+    var Dump = function() {
+        var args = Array.prototype.slice.call(arguments);
+        return Display(level.DEBUG, args);
+    };
+
     Dump.config = new DumpConfig();
+    Dump.info = function() {
+        var args = Array.prototype.slice.call(arguments);
+        return Display(level.INFO, args);
+    };
+    Dump.warning = function() {
+        var args = Array.prototype.slice.call(arguments);
+        return Display(level.WARNING, args);
+    };
+    Dump.error = function() {
+        var args = Array.prototype.slice.call(arguments);
+        return Display(level.ERROR, args);
+    };
+    Dump.fatal = function() {
+        var args = Array.prototype.slice.call(arguments);
+        Display(level.FATAL, args);
+        throw "FATAL: " + argsToString(args);
+    };
 
     return Dump;
 })();

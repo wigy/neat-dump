@@ -22,7 +22,7 @@ For example, in your HTML-page, simply use it like
     See the console...
     <script>
       var obj = {name: "Some Name", value: 1.23};
-      d("Obj value is", obj);
+      d("Obj value is", obj, "and value of PI is", Math.PI);
     </script>
   </body>
 </html>
@@ -35,7 +35,8 @@ TODO: Update sample output.
 You can use it in the middle of the expression to dump values, since it returns the value of
 the last argument
 ```js
-   result = some_function(d(a * a + b * b), c);
+   var a = 2, b = 3;
+   result = Math.sqrt(d(a * a + b * b));
 ```
 
 TODO: Sample output here

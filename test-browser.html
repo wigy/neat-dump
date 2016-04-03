@@ -5,9 +5,11 @@
     <body>
     See the console...
     <script>
-      var obj = {name: "Some Name", value: 1.23};
-      d("Obj value is", obj);
-      d("My configuration is", d.config);
+      d("Value of the PI is", Math.PI);
+      d("Dumping configuration is", d.config);
+      d.info("This is an informative message.");
+      d.warning("This is a warning message.");
+      d.error("This is an error message.");
     </script>
   </body>
 </html>
