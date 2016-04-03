@@ -69,14 +69,28 @@ Node-application:
  12:17:04 DEBUG:  Our application is starting with the configuration {mode: "debug", port: 2000}
 ```
 
+## Configuring and turning it off in production
+
+The utility is configurable. You can mute it completely for the production use for example:
+```js
+    d.config.beQuiet = true;
+```
+The configuration has also some auto-detected flags. The `d.config` has
+
+* `hasNode` - Set if we are in the Node environment.
+* `hasBrowser` - Set if we are in the browser environment.
+* `beQuiet` - When set, we don't output anything.
+* `showSourceLine` - When set, show the line, which has called dumping.
+* `showStackTrace` - When set, show also full stack trace when values are dumped.
+* `showTimestamp` - When set, include the time stamp in every line displayed.
+* `showErrorLevel` - When set, include error level every line displayed.
+* `showFunctions` - When set, show also functions.
+* `displayFunction` - A function handling the actual showing of the message.
 
 ## It can be used in unit-testing
 
 TODO: Document
 
-## Configuring and turning it off in production
-
-TODO: Document
 
 ## Using different channels
 
