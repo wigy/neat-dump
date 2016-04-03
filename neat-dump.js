@@ -12,6 +12,12 @@ var d = (function(){
     };
 
     /**
+     * A mapping from channel names to flags telling if output is turned on.
+     */
+    var channels = {
+    };
+
+    /**
      * Dump configration with auto-detection.
      */
     function DumpConfig() {
@@ -124,11 +130,13 @@ var d = (function(){
      * A class wrapping one line of a message to be displayed.
      *
      * level - The message level.
+     * channel - Name of the message category.
      * prefix - Text to be added before the message.
      * args - Actual arguments to the dump function calll.
      */
-    function DumpMessage(level, prefix, args) {
+    function DumpMessage(level, channel, prefix, args) {
         this.level = level;
+        this.channel = channel;
         this.prefix = prefix;
         this.args = args;
     }
@@ -137,7 +145,12 @@ var d = (function(){
      * Default implementation of actual dumping.
      */
     function displayEngine(msg) {
-        console.log(msg.prefix + argsToString(msg.args));
+        var text = msg.prefix;
+        if (msg.channel !== null) {
+            text += ' [' + msg.channel + '] ';
+        }
+        text += argsToString(msg.args);
+        console.log(text);
     }
 
     /**
@@ -145,8 +158,13 @@ var d = (function(){
      */
     function displayEngineBrowser(msg) {
         var args = msg.args;
+
+        if (msg.channel !== null) {
+            args.unshift(' [' + msg.channel + '] ');
+        }
+
         if (msg.prefix !== '') {
-            args.unshift(msg.prefix);
+            args.unshift(msg.prefix.trim());
         }
 
         switch (msg.level) {
@@ -174,22 +192,28 @@ var d = (function(){
      */
     function displayEngineNode(msg) {
         var text = argsToString(msg.args);
+        var prefix = msg.prefix;
+        prefix = prefix.trim();
+        if (msg.channel !== null) {
+            prefix += ' [' + msg.channel + ']';
+        }
+
         switch (msg.level) {
             case level.DEBUG:
-                console.log('\u001b[32m', msg.prefix, text, '\u001b[39m');
+                console.log('\u001b[32m', prefix, text, '\u001b[39m');
                 break;
             case level.INFO:
-                console.log('\u001b[37m', msg.prefix, text, '\u001b[39m');
+                console.log('\u001b[37m', prefix, text, '\u001b[39m');
                 break;
             case level.WARNING:
-                console.log('\u001b[35m', msg.prefix, text, '\u001b[39m');
+                console.log('\u001b[35m', prefix, text, '\u001b[39m');
                 break;
             case level.ERROR:
             case level.FATAL:
-                console.log('\u001b[31m', msg.prefix, text, '\u001b[39m');
+                console.log('\u001b[31m', prefix, text, '\u001b[39m');
                 break;
             default:
-                console.log(msg.prefix, text);
+                console.log(prefix, text);
                 break;
         }
     }
@@ -225,6 +249,24 @@ var d = (function(){
                 }
             }
 
+            // Resolve the channel and check if it is turned on.
+            var channel = null;
+
+            if (Object.keys(channels).length > 0) {
+                if (args[0] in channels) {
+                    if (!channels[args[0]]) {
+                        return args[args.length - 1];
+                    }
+                    channel = args[0];
+                    args = args.splice(1);
+                } else {
+                    channel = 'GENERAL';
+                    if (channel in channels && !channels[channel]) {
+                        return args[args.length - 1];
+                    }
+                }
+            }
+
             // Calculate prefix.
             var prefix = '';
             if (Dump.config.showTimestamp) {
@@ -236,22 +278,22 @@ var d = (function(){
 
             // Show the stack trace, if configured.
             if (Dump.config.showStackTrace) {
-                msg = new DumpMessage(level, prefix, ['-------------------------------------------------------------------']);
+                msg = new DumpMessage(level, channel, prefix, ['-------------------------------------------------------------------']);
                 Dump.config.displayFunction(msg);
                 for (var i = 0; i < stack.length; i++) {
-                    msg = new DumpMessage(level, prefix, [stack[i]]);
+                    msg = new DumpMessage(level, channel, prefix, [stack[i]]);
                     Dump.config.displayFunction(msg);
                 }
             }
 
             // Show the source line, if configured and not showing full stack trace.
             else if (Dump.config.showSourceLine) {
-                msg = new DumpMessage(level, prefix, ['-------------', caller, '-------------']);
+                msg = new DumpMessage(level, channel, prefix, ['-------------', caller, '-------------']);
                 Dump.config.displayFunction(msg);
             }
 
             // Construct a message and display it.
-            msg = new DumpMessage(level, prefix, args);
+            msg = new DumpMessage(level, channel, prefix, args);
             Dump.config.displayFunction(msg);
         }
 
@@ -283,6 +325,9 @@ var d = (function(){
         var args = Array.prototype.slice.call(arguments);
         display(level.FATAL, args);
         throw new Error("FATAL: " + argsToString(args));
+    };
+    Dump.channels = function(config) {
+        channels = config;
     };
 
     return Dump;

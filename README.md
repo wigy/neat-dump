@@ -87,12 +87,33 @@ The configuration has also some auto-detected flags. The `d.config` has
 * `showFunctions` - When set, show also functions.
 * `displayFunction` - A function handling the actual showing of the message.
 
+## Using different channels
+
+You can define different channels that can be turned on and off independently. This is useful for
+adding debuggin information for some particular module. To define channels you call `d.channels()`
+and give channel names mapped to flags if they are turned on or off. To use channels, you add the
+name of the string as the first parameter to the `d()` call. If the first parameter does not match
+any defined channels, then channel `GENERIC` is used. It can also be turned off when setting
+channels just like any other channel.
+
+```js
+    d.channels({
+        NETWORK: true,
+        CORE: true
+    });
+    d.config.showSourceLine = false;
+    d("CORE", "Launching the application.");
+    d("NETWORK", "Connecting to the server...");
+    d("NETWORK", "We are connected.");
+```
+
+```shell
+ 13:46:11 DEBUG: [CORE] Launching the application.
+ 13:46:11 DEBUG: [NETWORK] Connecting to the server...
+ 13:46:11 DEBUG: [NETWORK] We are connected.
+ 13:46:11 DEBUG: [GENERAL] Something else.
+```
+
 ## It can be used in unit-testing
 
 TODO: Document
-
-
-## Using different channels
-
-TODO: Document
-
