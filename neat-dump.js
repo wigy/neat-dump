@@ -23,9 +23,10 @@ var d = (function(){
         // When set, we don't output anything.
         this.beQuiet = false;
         // When set, show the line, which has called dumping.
-        this.showSourceLine = true; // TODO: Implement
+        this.showSourceLine = true;
+        // TODO: Implement
         // When set, show also full stack trace when values are dumped.
-        this.showFullStack = false; // TODO: Implement
+        this.showStackTrace = false;
         // When set, include the time stamp in every line displayed.
         this.showTimestamp = false;
         // When set, include error level every line displayed.
@@ -126,26 +127,11 @@ var d = (function(){
      * level - The message level.
      * prefix - Text to be added before the message.
      * args - Actual arguments to the dump function calll.
-     * stack - An array of lines in the stack dump.
-     * caller - The file and line number of the caller.
      */
-    function DumpMessage(level, prefix, args, stack) {
+    function DumpMessage(level, prefix, args) {
         this.level = level;
         this.prefix = prefix;
         this.args = args;
-        this.stack = stack;
-
-        var caller = /\((.*)\)/.exec(stack[0]);
-        if (caller) {
-            this.caller = caller[1];
-        } else {
-            caller = /^\s+at\s+(.*)/.exec(stack[0]);
-            if (caller) {
-                this.caller = caller[1];
-            } else {
-                this.caller = stack[0].trim();
-            }
-        }
     }
 
     /**
@@ -220,10 +206,25 @@ var d = (function(){
 
         if (Dump.config.displayFunction && !Dump.config.beQuiet) {
 
-            // Get the stack trace.
+            var msg;
+
+            // Get the stack trace and calculate caller.
             var err = new Error('Stack trace');
             var stack = err.stack.split("\n");
             stack.splice(0,3);
+
+            var line = /\((.*)\)/.exec(stack[0]);
+            var caller;
+            if (line) {
+                caller = line[1];
+            } else {
+                line = /^\s+at\s+(.*)/.exec(stack[0]);
+                if (line) {
+                    caller = line[1];
+                } else {
+                    caller = stack[0].trim();
+                }
+            }
 
             // Calculate prefix.
             var prefix = '';
@@ -234,8 +235,14 @@ var d = (function(){
                 prefix += level + ': ';
             }
 
+            // Show the source line, if configured and not showing full stack trace.
+            if (Dump.config.showSourceLine && !Dump.config.showStackTrace) {
+                msg = new DumpMessage(level, prefix, ['-------------', caller, '-------------']);
+                Dump.config.displayFunction(msg);
+            }
+
             // Construct a message and display it.
-            var msg = new DumpMessage(level, prefix, args, stack);
+            msg = new DumpMessage(level, prefix, args);
             Dump.config.displayFunction(msg);
         }
 
