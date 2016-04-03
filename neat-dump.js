@@ -188,7 +188,25 @@ var d = (function(){
      * Dumping implementation for Node.
      */
     function displayEngineNode(msg) {
-        displayEngine(msg);
+        var text = argsToString(msg.args);
+        switch (msg.level) {
+            case level.DEBUG:
+                console.log('\u001b[32m', msg.prefix, text, '\u001b[39m');
+                break;
+            case level.INFO:
+                console.log('\u001b[37m', msg.prefix, text, '\u001b[39m');
+                break;
+            case level.WARNING:
+                console.log('\u001b[35m', msg.prefix, text, '\u001b[39m');
+                break;
+            case level.ERROR:
+            case level.FATAL:
+                console.log('\u001b[31m', msg.prefix, text, '\u001b[39m');
+                break;
+            default:
+                console.log(msg.prefix, text);
+                break;
+        }
     }
 
     /**
