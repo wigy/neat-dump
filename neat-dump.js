@@ -23,9 +23,9 @@ var d = (function(){
         // When set, we don't output anything.
         this.beQuiet = false;
         // When set, show the line, which has called dumping.
-        this.showSourceLine = true;
+        this.showSourceLine = true; // TODO: Implement
         // When set, show also full stack trace when values are dumped.
-        this.showFullStack = false;
+        this.showFullStack = false; // TODO: Implement
         // When set, include the time stamp in every line displayed.
         this.showTimestamp = false;
         // When set, include error level every line displayed.
@@ -159,14 +159,36 @@ var d = (function(){
      * Dumping implementation for browsers.
      */
     function DisplayEngineBrowser(msg) {
-        DisplayEngine(msg)
+        var args = msg.args;
+        if (msg.prefix !== '') {
+            args.unshift(msg.prefix);
+        }
+
+        switch (msg.level) {
+            case level.DEBUG:
+                console.debug.apply(console, args);
+                break;
+            case level.INFO:
+                console.info.apply(console, args);
+                break;
+            case level.WARNING:
+                console.warn.apply(console, args);
+                break;
+            case level.ERROR:
+            case level.FATAL:
+                console.error.apply(console, args);
+                break;
+            default:
+                console.log.apply(console, args);
+                break;
+        }
     }
 
     /**
      * Dumping implementation for Node.
      */
     function DisplayEngineNode(msg) {
-        DisplayEngine(msg)
+        DisplayEngine(msg);
     }
 
     /**
