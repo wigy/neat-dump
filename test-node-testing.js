@@ -2,8 +2,23 @@
 
 var d = require('./neat-dump')
 
-// TODO: this could be added as package test once done
+d.config.showSourceLine = false;
+
+d("Testing toBe()...");
 d.expect(function(){
-    d("Message 1");
-    d.info("Message 2");
+    function my(num) {
+        d("Number was", num);
+    }
+    my(7);
+    my(-1);
+}).toBe("Number was 7", "Number was -1");
+
+d("Testing toHaveMessages()...");
+d.expect(function(){
+    d.error("Test error.");
 }).toHaveMessages();
+
+d("Testing not...");
+d.expect(function(){
+    /* No messages */
+}).not.toHaveMessages();

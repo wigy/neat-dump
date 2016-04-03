@@ -116,4 +116,32 @@ channels just like any other channel.
 
 ## It can be used in unit-testing
 
-TODO: Document
+In unit testing you can check what messages has been received. With `toBe()` you can check the exact
+text of messages in the strict order:
+
+```js
+d.expect(function(){
+    function my(num) {
+        d("Number was", num);
+    }
+    my(7);
+    my(-1);
+}).toBe("Number was 7", "Number was -1");
+```
+
+To just check that there are messages, one can use:
+
+```js
+d.expect(function(){
+    d.error("Test error.");
+}).toHaveMessages();
+```
+
+Negated test is also supported:
+
+```js
+d("Testing not...");
+d.expect(function(){
+    /* No messages */
+}).not.toHaveMessages();
+```

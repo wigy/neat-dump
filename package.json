@@ -4,7 +4,7 @@
   "description": "Neat multi-purpose tool to display values on browser or console",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test-node-testing.js"
   },
   "repository": {
     "type": "git",

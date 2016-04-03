@@ -47,6 +47,7 @@ var d = (function(){
             this.hasNode = false;
         }
 
+        // At the moment browser implementation does not require anything special.
         this.hasBrowser = !this.hasNode;
 
         if (this.hasBrowser) {
@@ -131,13 +132,15 @@ var d = (function(){
      *
      * level - The message level.
      * channel - Name of the message category.
+     * type - Type of the message ('message', 'line', 'stack')
      * prefix - Text to be added before the message.
      * args - Actual arguments to the dump function call.
      * text - Text presentation of the message.
      */
-    function DumpMessage(level, channel, prefix, args) {
+    function DumpMessage(level, channel, type, prefix, args) {
         this.level = level;
         this.channel = channel;
+        this.type = type;
         this.prefix = prefix;
         this.args = args;
         this.text = argsToString(args);
@@ -280,22 +283,22 @@ var d = (function(){
 
             // Show the stack trace, if configured.
             if (Dump.config.showStackTrace) {
-                msg = new DumpMessage(level, channel, prefix, ['-------------------------------------------------------------------']);
+                msg = new DumpMessage(level, channel, 'stack', prefix, ['-------------------------------------------------------------------']);
                 Dump.config.displayFunction(msg);
                 for (var i = 0; i < stack.length; i++) {
-                    msg = new DumpMessage(level, channel, prefix, [stack[i]]);
+                    msg = new DumpMessage(level, channel, 'stack', prefix, [stack[i]]);
                     Dump.config.displayFunction(msg);
                 }
             }
 
             // Show the source line, if configured and not showing full stack trace.
             else if (Dump.config.showSourceLine) {
-                msg = new DumpMessage(level, channel, prefix, ['-------------', caller, '-------------']);
+                msg = new DumpMessage(level, channel, 'line', prefix, ['-------------', caller, '-------------']);
                 Dump.config.displayFunction(msg);
             }
 
             // Construct a message and display it.
-            msg = new DumpMessage(level, channel, prefix, args);
+            msg = new DumpMessage(level, channel, 'message', prefix, args);
             Dump.config.displayFunction(msg);
         }
 
@@ -317,7 +320,8 @@ var d = (function(){
             }
 
             // Helper to raise expectation.
-            function passOrRaise(flag, message) {
+            function passOrRaise(flag, message, actual) {
+                message += " (had " + argToString(actual) + ")";
                 if (!flag && !negated) {
                     throw new Error("Dump Expectation Failed: expected to " + message);
                 }
@@ -325,9 +329,38 @@ var d = (function(){
                     throw new Error("Dump Expectation Failed: expected not to " + message);
                 }
             }
+
+            // Helper to collect actual message texts.
+            function messageTexts() {
+                var ret = [];
+                for (i = 0; i < messages.length; i++) {
+                    if (messages[i].type === 'message') {
+                        ret.push (messages[i].text);
+                    }
+                }
+                return ret;
+            }
+
             // Test if there are any messages.
             this.toHaveMessages = function() {
-                passOrRaise(messages.length > 0, "have some messages");
+                passOrRaise(messages.length > 0, "have some messages", messages.length);
+            }
+
+            // Test if messages match exact list.
+            this.toBe = function() {
+                var args = Array.prototype.slice.call(arguments);
+                var texts = messageTexts();
+                var match = false;
+                if (args.length == texts.length) {
+                    match = true;
+                    for (var i = 0; i < args.length; i++) {
+                        if (args[i] !== texts[i]) {
+                            match = false;
+                            break;
+                        }
+                    }
+                }
+                passOrRaise(match, "have exactly " + args.length + " messages ['" + args.join("', '") + "']", texts);
             }
         }
 
