@@ -132,13 +132,15 @@ var d = (function(){
      * level - The message level.
      * channel - Name of the message category.
      * prefix - Text to be added before the message.
-     * args - Actual arguments to the dump function calll.
+     * args - Actual arguments to the dump function call.
+     * text - Text presentation of the message.
      */
     function DumpMessage(level, channel, prefix, args) {
         this.level = level;
         this.channel = channel;
         this.prefix = prefix;
         this.args = args;
+        this.text = argsToString(args);
     }
 
     /**
@@ -149,7 +151,7 @@ var d = (function(){
         if (msg.channel !== null) {
             text += ' [' + msg.channel + '] ';
         }
-        text += argsToString(msg.args);
+        text += msg.text;
         console.log(text);
     }
 
@@ -191,7 +193,7 @@ var d = (function(){
      * Dumping implementation for Node.
      */
     function displayEngineNode(msg) {
-        var text = argsToString(msg.args);
+        var text = msg.text;
         var prefix = msg.prefix;
         prefix = prefix.trim();
         if (msg.channel !== null) {
