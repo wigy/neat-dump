@@ -308,6 +308,7 @@ var d = (function(){
 
     function runTest(callback) {
 
+        // TODO: A flag debugTesting to display messages also using old display
         // When testing, messages are collected here instead of displaying.
         var messages = [];
 
@@ -356,7 +357,7 @@ var d = (function(){
     Dump.channels = function(config) {
         channels = config;
     };
-    Dump.test = function(callback) {
+    Dump.expect = function(callback) {
         return runTest(callback);
     };
 
