@@ -28,6 +28,8 @@ var d = (function(){
         this.showFullStack = false;
         // When set, include the time stamp in every line displayed.
         this.showTimestamp = false;
+        // When set, include error level every line displayed.
+        this.showErrorLevel = false;
         // When set, show also functions.
         this.showFunctions = false;
         // A function handling the actual showing of the message.
@@ -37,7 +39,6 @@ var d = (function(){
             var test = module.id;
         } catch(e)  {
             this.hasNode = false;
-            this.showTimestamp = true;
         }
 
         this.hasBrowser = !this.hasNode;
@@ -46,6 +47,8 @@ var d = (function(){
             this.displayFunction = DisplayEngineBrowser;
         } else if (this.hasNode) {
             this.displayFunction = DisplayEngineNode;
+            this.showTimestamp = true;
+            this.showErrorLevel = true;
         }
     }
 
@@ -121,12 +124,14 @@ var d = (function(){
      * A class wrapping one line of a message to be displayed.
      *
      * level - The message level.
+     * prefix - Text to be added before the message.
      * args - Actual arguments to the dump function calll.
      * stack - An array of lines in the stack dump.
      * caller - The file and line number of the caller.
      */
-    function DumpMessage(level, args, stack) {
+    function DumpMessage(level, prefix, args, stack) {
         this.level = level;
+        this.prefix = prefix;
         this.args = args;
         this.stack = stack;
 
@@ -147,7 +152,7 @@ var d = (function(){
      * Default implementation of actual dumping.
      */
     function DisplayEngine(msg) {
-        console.log(msg)
+        console.log(msg.prefix + argsToString(msg.args));
     }
 
     /**
@@ -168,16 +173,32 @@ var d = (function(){
      * Actual display handler for dumping values.
      */
     function Display(level, args) {
+
         if (args.length === 0) {
             return;
         }
-        var err = new Error('Stack trace');
-        var stack = err.stack.split("\n");
-        stack.splice(0,3);
-        var msg = new DumpMessage(level, args, stack);
+
         if (Dump.config.displayFunction && !Dump.config.beQuiet) {
+
+            // Get the stack trace.
+            var err = new Error('Stack trace');
+            var stack = err.stack.split("\n");
+            stack.splice(0,3);
+
+            // Calculate prefix.
+            var prefix = '';
+            if (Dump.config.showTimestamp) {
+                prefix += (new Date()).toJSON().substr(11, 8) + ' ';
+            }
+            if (Dump.config.showErrorLevel) {
+                prefix += level + ': ';
+            }
+
+            // Construct a message and display it.
+            var msg = new DumpMessage(level, prefix, args, stack);
             Dump.config.displayFunction(msg);
         }
+
         return args[args.length - 1];
     }
 
