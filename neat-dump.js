@@ -1,6 +1,17 @@
 var d = (function(){
 
     /**
+     * Definition of message levels.
+     */
+    var level = {
+        DEBUG: "DEBUG",
+        INFO: "INFO",
+        WARNING: "WARNING",
+        ERROR: "ERROR",
+        FATAL: "FATAL"
+    };
+
+    /**
      * Dump configration with auto-detection.
      */
     function DumpConfig() {
@@ -20,7 +31,7 @@ var d = (function(){
         // When set, show also functions.
         this.showFunctions = false;
         // A function handling the actual showing of the message.
-        this.displayFunction = DumpEngine;
+        this.displayFunction = DisplayEngine;
 
         try {
             var test = module.id;
@@ -32,9 +43,9 @@ var d = (function(){
         this.hasBrowser = !this.hasNode;
 
         if (this.hasBrowser) {
-            this.displayFunction = DumpEngineBrowser;
+            this.displayFunction = DisplayEngineBrowser;
         } else if (this.hasNode) {
-            this.displayFunction = DumpEngineNode;
+            this.displayFunction = DisplayEngineNode;
         }
     }
 
@@ -42,7 +53,7 @@ var d = (function(){
      * Convert anything to reasonable string presentation.
      */
     function argToString(arg) {
-        // TODO: Mark and detect recustion on objects.
+        // TODO: Mark and detect recustion on objects like in d(document)
         // TODO: Detect and fix objects with keys 0..n-1 like in d(document.all)
         var m;
         var msg = '';
@@ -107,42 +118,51 @@ var d = (function(){
     }
 
     /**
-     * Definition of message levels.
-     */
-    var level = {
-        DEBUG: "DEBUG",
-        INFO: "INFO",
-        WARNING: "WARNING",
-        ERROR: "ERROR",
-        FATAL: "FATAL"
-    };
-
-    /**
      * A class wrapping one line of a message to be displayed.
+     *
+     * level - The message level.
+     * args - Actual arguments to the dump function calll.
+     * stack - An array of lines in the stack dump.
+     * caller - The file and line number of the caller.
      */
-    function DumpMessage() {
+    function DumpMessage(level, args, stack) {
+        this.level = level;
+        this.args = args;
+        this.stack = stack;
+
+        var caller = /\((.*)\)/.exec(stack[0]);
+        if (caller) {
+            this.caller = caller[1];
+        } else {
+            caller = /^\s+at\s+(.*)/.exec(stack[0]);
+            if (caller) {
+                this.caller = caller[1];
+            } else {
+                this.caller = stack[0].trim();
+            }
+        }
     }
 
     /**
-     * A base class for dumping implementations.
+     * Default implementation of actual dumping.
      */
-    function DumpEngine() {
-
+    function DisplayEngine(msg) {
+        console.log(msg)
     }
 
     /**
      * Dumping implementation for browsers.
      */
-    function DumpEngineBrowser() {
+    function DisplayEngineBrowser(msg) {
+        DisplayEngine(msg)
     }
-    DumpEngineBrowser.prototype = new DumpEngine();
 
     /**
      * Dumping implementation for Node.
      */
-    function DumpEngineNode() {
+    function DisplayEngineNode(msg) {
+        DisplayEngine(msg)
     }
-    DumpEngineNode.prototype = new DumpEngine();
 
     /**
      * Actual display handler for dumping values.
@@ -151,7 +171,13 @@ var d = (function(){
         if (args.length === 0) {
             return;
         }
-        console.log(argsToString(args));
+        var err = new Error('Stack trace');
+        var stack = err.stack.split("\n");
+        stack.splice(0,3);
+        var msg = new DumpMessage(level, args, stack);
+        if (Dump.config.displayFunction && !Dump.config.beQuiet) {
+            Dump.config.displayFunction(msg);
+        }
         return args[args.length - 1];
     }
 
@@ -179,7 +205,7 @@ var d = (function(){
     Dump.fatal = function() {
         var args = Array.prototype.slice.call(arguments);
         Display(level.FATAL, args);
-        throw "FATAL: " + argsToString(args);
+        throw new Error("FATAL: " + argsToString(args));
     };
 
     return Dump;
