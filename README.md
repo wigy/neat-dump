@@ -155,4 +155,4 @@ d.expect(function(){
 
 ## Future Ideas
 
-* Add automatic support for https://github.com/CodeSeven/toastr in browser.
+* Add (automatic but) configurable support for https://github.com/CodeSeven/toastr in browser.
