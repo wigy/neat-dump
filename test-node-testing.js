@@ -24,7 +24,7 @@ d.expect(function(){
     d.error("Test error.");
 }).toHaveMessages();
 
-d.info("Testing not...");
+d.info("Testing not.toHaveMessages()...");
 d.expect(function(){
     /* No messages */
 }).not.toHaveMessages();
@@ -50,3 +50,11 @@ d.expect(function(){
     d(function (){});
     d.config.showFunctions = false;
 }).toBe("function x(){...}", "function (){...}");
+
+d.info("Prevents recursion...");
+d.expect(function(){
+    x = {};
+    y = {x: x};
+    x.y = y;
+    d(x);
+}).toBe('{y: {x: *recursion*}}');

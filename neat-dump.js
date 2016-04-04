@@ -64,8 +64,8 @@ var d = (function(){
     /**
      * Convert anything to reasonable string presentation.
      */
-    function argToString(arg) {
-        // TODO: Mark and detect recursion on objects like in d(document)
+    function argToString(arg, depth) {
+        depth = depth || 0;
         var m;
         var msg = '';
         if (arg instanceof Array) {
@@ -74,7 +74,7 @@ var d = (function(){
                 if (m) {
                     msg += ', ';
                 }
-                msg += argToString(arg[m]);
+                msg += argToString(arg[m], depth + 1);
             }
             msg += ']';
         } else if (arg instanceof Function) {
@@ -84,6 +84,10 @@ var d = (function(){
                 msg = '';
             }
         } else if (arg instanceof Object) {
+            if (arg.$$neatDumpHasSeenThis) {
+                return '*recursion*';
+            }
+            arg.$$neatDumpHasSeenThis = true;
             // If object has its own implementation, let's use it.
             if (arg.toString !== ({}).toString) {
                 msg += arg.toString();
@@ -91,6 +95,9 @@ var d = (function(){
                 msg += '{';
                 var members = Object.getOwnPropertyNames(arg).sort();
                 for (m = 0; m < members.length; m++) {
+                    if (members[m] == '$$neatDumpHasSeenThis') {
+                        continue;
+                    }
                     if (arg[members[m]] instanceof Function) {
                         continue;
                     }
@@ -98,7 +105,8 @@ var d = (function(){
                         msg += ', ';
                     }
                     msg += members[m] + ': ';
-                    msg += argToString(arg[members[m]]);
+                    msg += argToString(arg[members[m]], depth + 1);
+                    delete arg.$$neatDumpHasSeenThis;
                 }
                 msg += '}';
             }
@@ -315,7 +323,6 @@ var d = (function(){
      */
     function DumpError(msg) {
         this.message = msg;
-        this.stack = (new Error()).stack;
     }
     DumpError.prototype = Object.create(Error.prototype);
     DumpError.prototype.name = "DumpError";
