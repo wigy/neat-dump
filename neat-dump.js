@@ -65,7 +65,7 @@ var d = (function(){
      * Convert anything to reasonable string presentation.
      */
     function argToString(arg) {
-        // TODO: Mark and detect recusrsion on objects like in d(document)
+        // TODO: Mark and detect recursion on objects like in d(document)
         var m;
         var msg = '';
         if (arg instanceof Array) {
@@ -78,8 +78,11 @@ var d = (function(){
             }
             msg += ']';
         } else if (arg instanceof Function) {
-            // TODO: If the showFunction flag is set...
-            msg = '';
+            if (Dump.config.showFunctions) {
+                msg = 'function ' + arg.name + '(){...}';
+            } else {
+                msg = '';
+            }
         } else if (arg instanceof Object) {
             // If object has its own implementation, let's use it.
             if (arg.toString !== ({}).toString) {
@@ -312,13 +315,19 @@ var d = (function(){
      */
     function DumpError(msg) {
         this.message = msg;
+        this.stack = (new Error()).stack;
     }
-    DumpError.prototype = new Error();
+    DumpError.prototype = Object.create(Error.prototype);
+    DumpError.prototype.name = "DumpError";
+    DumpError.prototype.constructor = DumpError;
 
     function DumpExceptionError(msg) {
         this.message = msg;
+        this.stack = (new Error()).stack;
     }
-    DumpExceptionError.prototype = new Error();
+    DumpExceptionError.prototype = Object.create(Error.prototype);
+    DumpExceptionError.prototype.name = "DumpExceptionError";
+    DumpExceptionError.prototype.constructor = DumpExceptionError;
 
     /**
      * Unit-testing helpers for dump tool.
@@ -396,6 +405,7 @@ var d = (function(){
             callback();
         } catch(e) {
             if (!(e instanceof DumpError)) {
+                Dump.config.displayFunction = oldDisplay;
                 throw e;
             }
         }

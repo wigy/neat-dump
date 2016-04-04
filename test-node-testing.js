@@ -42,3 +42,11 @@ d.info("Testing exceptions in test...");
 d.expect(function(){
     d.fatal("DIE!");
 }).toBe("DIE!");
+
+d.info("Testing functions presentation...");
+d.expect(function(){
+    d.config.showFunctions = true;
+    d(function x(){});
+    d(function (){});
+    d.config.showFunctions = false;
+}).toBe("function x(){...}", "function (){...}");
