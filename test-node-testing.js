@@ -37,3 +37,8 @@ d.expect(function(){
     }
     d(new Obj());
 }).toBe('I am Obj 12');
+
+d.info("Testing exceptions in test...");
+d.expect(function(){
+    d.fatal("DIE!");
+}).toBe("DIE!");

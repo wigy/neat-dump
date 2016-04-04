@@ -308,6 +308,19 @@ var d = (function(){
     }
 
     /**
+     * Exception classes for the utilty.
+     */
+    function DumpError(msg) {
+        this.message = msg;
+    }
+    DumpError.prototype = new Error();
+
+    function DumpExceptionError(msg) {
+        this.message = msg;
+    }
+    DumpExceptionError.prototype = new Error();
+
+    /**
      * Unit-testing helpers for dump tool.
      */
     function runTest(callback) {
@@ -325,10 +338,10 @@ var d = (function(){
             function passOrRaise(flag, message, actual) {
                 message += " (had " + argToString(actual) + ")";
                 if (!flag && !negated) {
-                    throw new Error("Dump Expectation Failed: expected to " + message);
+                    throw new DumpExceptionError("Dump Expectation Failed: expected to " + message);
                 }
                 if (flag && negated) {
-                    throw new Error("Dump Expectation Failed: expected not to " + message);
+                    throw new DumpExceptionError("Dump Expectation Failed: expected not to " + message);
                 }
             }
 
@@ -379,8 +392,13 @@ var d = (function(){
         }
 
         Dump.config.displayFunction = displayTesting;
-        // TODO: Try/catch/re-raise
-        callback();
+        try {
+            callback();
+        } catch(e) {
+            if (!(e instanceof DumpError)) {
+                throw e;
+            }
+        }
         Dump.config.displayFunction = oldDisplay;
 
         return new DumpExpectation(messages);
@@ -410,7 +428,7 @@ var d = (function(){
     Dump.fatal = function() {
         var args = Array.prototype.slice.call(arguments);
         display(level.FATAL, args);
-        throw new Error("FATAL: " + argsToString(args));
+        throw new DumpError("FATAL: " + argsToString(args));
     };
     Dump.channels = function(config) {
         channels = config;
