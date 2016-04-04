@@ -92,6 +92,7 @@ The configuration has also some auto-detected flags. The `d.config` has
 * `showTimestamp` - When set, include the time stamp in every line displayed.
 * `showErrorLevel` - When set, include error level every line displayed.
 * `showFunctions` - When set, show also functions.
+* `debugTesting` - When set, messages are also displayed when running unit-tests.
 * `displayFunction` - A function handling the actual showing of the message.
 
 ## Using different channels
@@ -112,6 +113,7 @@ channels just like any other channel.
     d("CORE", "Launching the application.");
     d("NETWORK", "Connecting to the server...");
     d("NETWORK", "We are connected.");
+    d("Something else.");
 ```
 
 ```shell
@@ -123,8 +125,9 @@ channels just like any other channel.
 
 ## It can be used in unit-testing
 
-In unit testing you can check what messages has been received. With `toBe()` you can check the exact
-text of messages in the strict order:
+In unit testing you can check what messages has been received. Call `d.expect()` with the function
+implementing the test and it return an expectation object you can use to check various things.
+With `toBe()` you can check the exact text of messages in the strict order:
 
 ```js
 d.expect(function(){
