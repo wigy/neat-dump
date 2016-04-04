@@ -3,6 +3,7 @@
 var d = require('./neat-dump')
 
 d.config.showSourceLine = false;
+d.config.debugTesting = false; // Enable to see messages from tests.
 
 d.info("Testing various basic string presentations...");
 d.expect(function(){
@@ -32,7 +33,7 @@ d.info("Testing that custom toString() is respected...");
 d.expect(function(){
     function Obj() {
         this.x = 12;
-        this.toString = function() {return 'I am Obj';}
+        this.toString = function() {return 'I am Obj ' + this.x;}
     }
     d(new Obj());
-}).toBe('I am Obj');
+}).toBe('I am Obj 12');

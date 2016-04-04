@@ -38,6 +38,8 @@ var d = (function(){
         this.showErrorLevel = false;
         // When set, show also functions.
         this.showFunctions = false;
+        // If set, display messages during the call to d.except() in unit-testing.
+        this.debugTesting = false;
         // A function handling the actual showing of the message.
         this.displayFunction = displayEngine;
 
@@ -64,7 +66,6 @@ var d = (function(){
      */
     function argToString(arg) {
         // TODO: Mark and detect recusrsion on objects like in d(document)
-        // TODO: Detect and fix objects with keys 0..n-1 like in d(document.all)
         var m;
         var msg = '';
         if (arg instanceof Array) {
@@ -365,24 +366,23 @@ var d = (function(){
             }
         }
 
-        // TODO: A flag debugTesting to display messages also using old display
         // When testing, messages are collected here instead of displaying.
         var messages = [];
+        var oldDisplay = Dump.config.displayFunction;
 
         // Display engine for testing.
         function displayTesting(msg) {
             messages.push(msg);
+            if (Dump.config.debugTesting) {
+                oldDisplay(msg);
+            }
         }
 
-        var oldDisplay = Dump.config.displayFunction;
         Dump.config.displayFunction = displayTesting;
         // TODO: Try/catch/re-raise
         callback();
         Dump.config.displayFunction = oldDisplay;
 
-        // TODO: Plan usage scenarios and return value.
-        //   Perhaps an object containing messages and some utilityfunctions like
-        //   texts() providing a list of plain messages without files.
         return new DumpExpectation(messages);
     }
 
