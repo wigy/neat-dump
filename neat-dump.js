@@ -358,7 +358,7 @@ var d = (function(){
             // Helper to raise expectation.
             function passOrRaise(flag, message, actual) {
                 // Make Jasmine happy in case that this is only test inside a case.
-                if (typeof(expect) === 'function') {
+                if (jasmine) {
                     expect(true).toBe(true);
                 }
 
