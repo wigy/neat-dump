@@ -69,12 +69,24 @@ var d = (function(){
         }
     }
 
+    // Storage for checking recursion.
     var seen = [];
+    // Helper to check if an object has been seen.
+    function hasSeen(arg) {
+        for (var s = 0; s < seen.length; s++) {
+            if (arg === seen[s]) {
+                return true;
+            }
+        }
+        seen.push(arg);
+        return false;
+    }
 
     /**
      * Convert anything to reasonable string presentation.
      */
     function argToString(arg, depth) {
+        // On the first call, reset list of seen objects.
         depth = depth || 0;
         if (!depth) {
             seen = [];
@@ -83,6 +95,9 @@ var d = (function(){
         var msg = '';
         // TODO: What if a = [1, 2, 3]; a[1] = a
         if (arg instanceof Array) {
+            if (hasSeen(arg)) {
+                return '*recursion*';
+            }
             msg += '[';
             for (m = 0; m < arg.length; m++) {
                 if (msg !== '[') {
@@ -99,12 +114,9 @@ var d = (function(){
             }
         } else if (arg instanceof Object) {
             // Avoid recursion by checking items we have already printed.
-            for (var s = 0; s < seen.length; s++) {
-                if (arg === seen[s]) {
-                    return '*recursion*';
-                }
+            if (hasSeen(arg)) {
+                return '*recursion*';
             }
-            seen.push(arg);
             // If object has its own implementation, let's use it.
             if (arg.toString !== ({}).toString) {
                 msg += arg.toString();

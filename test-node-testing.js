@@ -51,10 +51,17 @@ d.expect(function(){
     d.config.showFunctions = false;
 }).toBe("function x(){...}", "function (){...}");
 
-d.info("Prevents recursion...");
+d.info("Prevents recursion for objects...");
 d.expect(function(){
-    x = {};
-    y = {x: x};
+    var x = {};
+    var y = {x: x};
     x.y = y;
     d(x);
 }).toBe('{y: {x: *recursion*}}');
+
+d.info("Prevents recursion for arrays...");
+d.expect(function(){
+    var a = [1, 2, 3];
+    a[1] = a;
+    d(a);
+}).toBe('[1, *recursion*, 3]');
