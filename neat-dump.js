@@ -73,6 +73,7 @@ var d = (function(){
         }
         var m;
         var msg = '';
+        // TODO: What if a = [1, 2, 3]; a[1] = a
         if (arg instanceof Array) {
             msg += '[';
             for (m = 0; m < arg.length; m++) {
@@ -356,6 +357,12 @@ var d = (function(){
 
             // Helper to raise expectation.
             function passOrRaise(flag, message, actual) {
+                // Make Jasmine happy in case that this is only test inside a case.
+                if (typeof(expect) === 'function') {
+                    expect(true).toBe(true);
+                }
+
+                // Actual test.
                 message += " (had " + argToString(actual) + ")";
                 if (!flag && !negated) {
                     throw new DumpExceptionError("Dump Expectation Failed: expected to " + message);
