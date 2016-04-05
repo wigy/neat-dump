@@ -61,17 +61,22 @@ var d = (function(){
         }
     }
 
+    var seen = [];
+
     /**
      * Convert anything to reasonable string presentation.
      */
     function argToString(arg, depth) {
         depth = depth || 0;
+        if (!depth) {
+            seen = [];
+        }
         var m;
         var msg = '';
         if (arg instanceof Array) {
             msg += '[';
             for (m = 0; m < arg.length; m++) {
-                if (m) {
+                if (msg !== '[') {
                     msg += ', ';
                 }
                 msg += argToString(arg[m], depth + 1);
@@ -84,10 +89,13 @@ var d = (function(){
                 msg = '';
             }
         } else if (arg instanceof Object) {
-            if (arg.$$neatDumpHasSeenThis) {
-                return '*recursion*';
+            // Avoid recursion by checking items we have already printed.
+            for (var s = 0; s < seen.length; s++) {
+                if (arg === seen[s]) {
+                    return '*recursion*';
+                }
             }
-            arg.$$neatDumpHasSeenThis = true;
+            seen.push(arg);
             // If object has its own implementation, let's use it.
             if (arg.toString !== ({}).toString) {
                 msg += arg.toString();
@@ -95,9 +103,6 @@ var d = (function(){
                 msg += '{';
                 var members = Object.getOwnPropertyNames(arg).sort();
                 for (m = 0; m < members.length; m++) {
-                    if (members[m] == '$$neatDumpHasSeenThis') {
-                        continue;
-                    }
                     if (arg[members[m]] instanceof Function) {
                         continue;
                     }
@@ -106,7 +111,6 @@ var d = (function(){
                     }
                     msg += members[m] + ': ';
                     msg += argToString(arg[members[m]], depth + 1);
-                    delete arg.$$neatDumpHasSeenThis;
                 }
                 msg += '}';
             }
