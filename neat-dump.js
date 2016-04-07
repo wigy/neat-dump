@@ -24,8 +24,6 @@ var d = (function(){
 
         // Set if we are in the Node environment.
         this.hasNode = true;
-        // Set if we are in the Jasmine environment.
-        this.hasJasmine = true;
         // Set if we are in the browser environment.
         this.hasBrowser = true;
         // When set, we don't output anything.
@@ -49,12 +47,6 @@ var d = (function(){
             module.id;
         } catch(e)  {
             this.hasNode = false;
-        }
-
-        try {
-            jasmine;
-        } catch(e)  {
-            this.hasJasmine = false;
         }
 
         // At the moment browser implementation does not require anything special.
@@ -275,21 +267,27 @@ var d = (function(){
             var msg;
 
             // Get the stack trace and calculate caller.
-            var err = new Error('Stack trace');
-            var stack = err.stack.split("\n");
-            stack.splice(0,3);
-
-            var line = /\((.*)\)/.exec(stack[0]);
             var caller;
-            if (line) {
-                caller = line[1];
-            } else {
-                line = /^\s+at\s+(.*)/.exec(stack[0]);
+
+            var err = new Error('Stack trace');
+
+            if (err.stack) {
+                var stack = err.stack.split("\n");
+                stack.splice(0,3);
+
+                var line = /\((.*)\)/.exec(stack[0]);
                 if (line) {
                     caller = line[1];
                 } else {
-                    caller = stack[0].trim();
+                    line = /^\s+at\s+(.*)/.exec(stack[0]);
+                    if (line) {
+                        caller = line[1];
+                    } else {
+                        caller = stack[0].trim();
+                    }
                 }
+            } else {
+                caller ='unknown';
             }
 
             // Resolve the channel and check if it is turned on.
@@ -321,7 +319,7 @@ var d = (function(){
 
             // Show the stack trace, if configured.
             if (Dump.config.showStackTrace) {
-                msg = new DumpMessage(level, channel, 'stack', prefix, ['-------------------------------------------------------------------']);
+                msg = new DumpMessage(level, channel, 'stack', prefix, ['________________________________________________________________________________________']);
                 Dump.config.displayFunction(msg);
                 for (var i = 0; i < stack.length; i++) {
                     msg = new DumpMessage(level, channel, 'stack', prefix, [stack[i]]);
@@ -331,7 +329,7 @@ var d = (function(){
 
             // Show the source line, if configured and not showing full stack trace.
             else if (Dump.config.showSourceLine) {
-                msg = new DumpMessage(level, channel, 'line', prefix, ['-------------', caller, '-------------']);
+                msg = new DumpMessage(level, channel, 'line', prefix, ['==', caller, '==']);
                 Dump.config.displayFunction(msg);
             }
 
@@ -377,10 +375,13 @@ var d = (function(){
 
             // Helper to raise expectation.
             function passOrRaise(flag, message, actual) {
+
                 // Make Jasmine happy in case that this is only test inside a case.
-                if (d.hasJasmine) {
-                    expect(true).toBe(true);
-                }
+                try {
+                    if (jasmine) {
+                        expect(true).toBe(true);
+                    }
+                } catch(e) {}
 
                 // Actual test.
                 message += " (had " + argToString(actual) + ")";
