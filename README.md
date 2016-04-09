@@ -123,6 +123,17 @@ channels just like any other channel.
  13:46:11 DEBUG: [GENERAL] Something else.
 ```
 
+In shared libraries, you can just define channels and leave their settings to be decided by the
+application by passing values null. For example
+
+```js
+    d.channels({
+        MODULE1: null,
+        MODULE2: null
+    });
+```
+
+
 ## It can be used in unit-testing
 
 In unit testing you can check what messages has been received. Call `d.expect()` with the function

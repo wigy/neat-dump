@@ -480,7 +480,15 @@ var d = (function(){
         throw new DumpError("FATAL: " + argsToString(args));
     };
     Dump.channels = function(config) {
-        channels = config;
+        for (var k in config) {
+            // New channel is always set from config.
+            if (!(k in channels)) {
+                channels[k] = config[k];
+            // Old channel is overridden unless value is null as defining a channel.
+            } else if (config[k] !== null) {
+                channels[k] = config[k];
+            }
+        }
     };
     Dump.expect = function(callback) {
         return runTest(callback);
