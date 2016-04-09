@@ -26,6 +26,8 @@ var d = (function(){
         this.hasNode = true;
         // Set if we are in the browser environment.
         this.hasBrowser = true;
+        // Set if we are in the Jasmine unit-testing environment.
+        this.hasJasmine = true;
         // When set, we don't output anything.
         this.beQuiet = false;
         // When set, show the line, which has called dumping.
@@ -49,10 +51,17 @@ var d = (function(){
             this.hasNode = false;
         }
 
+        try {
+            var test2 = window.jasmine.Env;
+        } catch(e) {
+            this.hasJasmine = false;
+        }
+
         // At the moment browser implementation does not require anything special.
         this.hasBrowser = !this.hasNode;
 
-        if (this.hasBrowser) {
+        if (this.hasJasmine) {
+        } else if (this.hasBrowser) {
             this.displayFunction = displayEngineBrowser;
         } else if (this.hasNode) {
             this.displayFunction = displayEngineNode;
