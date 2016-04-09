@@ -44,7 +44,7 @@ var d = (function(){
         this.displayFunction = displayEngine;
 
         try {
-            module.id;
+            var test = module.id;
         } catch(e)  {
             this.hasNode = false;
         }
@@ -267,12 +267,12 @@ var d = (function(){
             var msg;
 
             // Get the stack trace and calculate caller.
-            var caller;
+            var caller, stack;
 
             var err = new Error('Stack trace');
 
             if (err.stack) {
-                var stack = err.stack.split("\n");
+                stack = err.stack.split("\n");
                 stack.splice(0,3);
 
                 var line = /\((.*)\)/.exec(stack[0]);
@@ -407,7 +407,7 @@ var d = (function(){
             // Test if there are any messages.
             this.toHaveMessages = function() {
                 passOrRaise(messages.length > 0, "have some messages", messages.length);
-            }
+            };
 
             // Test if messages match exact list.
             this.toBe = function() {
@@ -424,7 +424,7 @@ var d = (function(){
                     }
                 }
                 passOrRaise(match, "have exactly " + args.length + " messages ['" + args.join("', '") + "']", texts);
-            }
+            };
         }
 
         // When testing, messages are collected here instead of displaying.
