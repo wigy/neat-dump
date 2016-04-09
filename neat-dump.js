@@ -195,7 +195,7 @@ var d = (function(){
         var args = msg.args;
 
         if (msg.channel !== null) {
-            args.unshift(' [' + msg.channel + '] ');
+            args.unshift('[' + msg.channel + ']');
         }
 
         if (msg.prefix !== '') {
