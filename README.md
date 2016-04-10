@@ -150,6 +150,8 @@ d.expect(function(){
 }).toBe("Number was 7", "Number was -1");
 ```
 
+Special channels are ignored, when testing messages.
+
 To just check that there are messages, one can use:
 
 ```js

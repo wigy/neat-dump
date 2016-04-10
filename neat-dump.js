@@ -403,11 +403,14 @@ var d = (function(){
             }
 
             // Helper to collect actual message texts.
-            function messageTexts() {
+            function messageTexts(filter) {
                 var ret = [];
                 for (i = 0; i < messages.length; i++) {
                     if (messages[i].type === 'message') {
-                        ret.push (messages[i].text);
+                        if (filter && !filter(messages[i])) {
+                            continue;
+                        }
+                        ret.push(messages[i].text);
                     }
                 }
                 return ret;
@@ -421,7 +424,9 @@ var d = (function(){
             // Test if messages match exact list.
             this.toBe = function() {
                 var args = Array.prototype.slice.call(arguments);
-                var texts = messageTexts();
+                var texts = messageTexts(function(msg) {
+                    return msg.channel === null || msg.channel === 'GENERAL';
+                });
                 var match = false;
                 if (args.length == texts.length) {
                     match = true;
