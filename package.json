@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/wigy/neat-dump/issues"
   },
-  "homepage": "https://github.com/wigy/neat-dump#readme"
+  "homepage": "https://github.com/wigy/neat-dump#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-uglify": "^1.0.1"
+  }
 }
