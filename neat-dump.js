@@ -263,6 +263,24 @@ var d = (function(){
     }
 
     /**
+     * Special handlers for various frameworks.
+     */
+    var special = {
+        ember: {
+            check: function(obj) {
+                return !!obj.__ember_meta__;
+            },
+            convert: function(obj) {
+                return {
+                    id: obj.get('id'),
+                    class: obj.get('constructor.modelName'),
+                    data: obj.get('data')
+                };
+            }
+        }
+    };
+
+    /**
      * Actual display handler for dumping values.
      */
     function display(level, args) {
@@ -340,6 +358,18 @@ var d = (function(){
             else if (Dump.config.showSourceLine) {
                 msg = new DumpMessage(level, channel, 'line', prefix, ['==', caller, '==']);
                 Dump.config.displayFunction(msg);
+            }
+
+            // Check if there are special implementations for this object and use it.
+            var supported = Object.keys(special);
+            for (var n = 0; n < args.length; n++) {
+                var arg = args[n];
+                for (var k in supported) {
+                    if (special[supported[k]].check(arg)) {
+                        args[n] = special[supported[k]].convert(arg);
+                        break;
+                    }
+                }
             }
 
             // Construct a message and display it.
