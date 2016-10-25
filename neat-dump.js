@@ -271,11 +271,14 @@ var d = (function(){
                 return !!obj.__ember_meta__;
             },
             convert: function(obj) {
-                return {
-                    id: obj.get('id'),
-                    class: obj.get('constructor.modelName'),
-                    data: obj.get('data')
-                };
+                var ret = new (function EmberObject(){});
+                ret.id = obj.get('id');
+                ret.class = obj.get('constructor.modelName');
+                ret.data = {};
+                obj.eachAttribute(function(name, meta) {
+                    ret.data[name] = obj.get(name);
+                });
+                return ret;
             }
         }
     };
