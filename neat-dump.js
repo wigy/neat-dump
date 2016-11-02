@@ -268,7 +268,7 @@ var d = (function(){
     var special = {
         ember: {
             check: function(obj) {
-                return !!obj.__ember_meta__;
+                return obj && !!obj.__ember_meta__;
             },
             convert: function(obj) {
                 var ret = new (function EmberObject(){});
@@ -367,7 +367,7 @@ var d = (function(){
             var supported = Object.keys(special);
             for (var n = 0; n < args.length; n++) {
                 var arg = args[n];
-                for (var k in supported) {
+                for (var k = 0; k < supported.length; k++) {
                     if (special[supported[k]].check(arg)) {
                         args[n] = special[supported[k]].convert(arg);
                         break;
