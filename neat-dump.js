@@ -268,17 +268,30 @@ var d = (function(){
     var special = {
         ember: {
             check: function(obj) {
+                if (!Ember) {
+                    return false;
+                }
                 return obj && !!obj.__ember_meta__;
             },
             convert: function(obj) {
-                var ret = new (function EmberObject(){});
-                ret.id = obj.get('id');
-                ret.class = obj.get('constructor.modelName');
-                ret.data = {};
-                obj.eachAttribute(function(name, meta) {
-                    ret.data[name] = obj.get(name);
-                });
-                return ret;
+                if (obj.eachAttribute) {
+                    var ret = new (function EmberObject(){});
+                    ret.id = obj.get('id');
+                    ret.class = obj.get('constructor.modelName');
+                    ret.data = {};
+                    obj.eachAttribute(function(name, meta) {
+                        ret.data[name] = obj.get(name);
+                    });
+                    return ret;
+                }
+                if (obj.objectAt) {
+                    ret = [];
+                    for (var i=0; i < obj.length; i++) {
+                        ret.push(special.ember.convert(obj.objectAt(i)));
+                    }
+                    return ret;
+                }
+                return {EmberObject: "Unidentified by neat-dump."};
             }
         }
     };
