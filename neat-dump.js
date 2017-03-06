@@ -271,7 +271,10 @@ var d = (function(){
                 if (!Ember) {
                     return false;
                 }
-                return obj && !!obj.__ember_meta__;
+                if (!obj) {
+                    return false;
+                }
+                return !!obj.__ember_meta__;
             },
             convert: function(obj) {
                 if (obj.eachAttribute) {
