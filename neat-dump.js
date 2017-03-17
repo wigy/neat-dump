@@ -268,7 +268,11 @@ var d = (function(){
     var special = {
         ember: {
             check: function(obj) {
-                if (!Ember) {
+                try {
+                    if (!Ember) {
+                        return false;
+                    }
+                } catch(err) {
                     return false;
                 }
                 if (!obj) {
