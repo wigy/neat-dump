@@ -237,29 +237,38 @@ var d = (function(){
     function displayEngineNode(msg) {
         var text = msg.text;
         var prefix = msg.prefix;
+        var color = '';
+        var end = '';
         prefix = prefix.trim();
         if (msg.channel !== null) {
             prefix += ' [' + msg.channel + ']';
         }
-
         switch (msg.level) {
             case level.DEBUG:
-                console.log('\u001b[32m', prefix, text, '\u001b[39m');
+                color = '\u001b[32m';
+                end = '\u001b[39m';
                 break;
             case level.INFO:
-                console.log('\u001b[37m', prefix, text, '\u001b[39m');
+                color = '\u001b[37m';
+                end = '\u001b[39m';
                 break;
             case level.WARNING:
-                console.log('\u001b[35m', prefix, text, '\u001b[39m');
+                color = '\u001b[35m';
+                end = '\u001b[39m';
                 break;
             case level.ERROR:
             case level.FATAL:
-                console.log('\u001b[31m', prefix, text, '\u001b[39m');
+                color = '\u001b[31m';
+                end = '\u001b[39m';
                 break;
             default:
-                console.log(prefix, text);
                 break;
         }
+        if (msg.type == 'line') {
+                color = '\u001b[1;30m';
+                end = '\u001b[39m';
+        }
+        console.log(color, prefix, text, end);
     }
 
     /**
