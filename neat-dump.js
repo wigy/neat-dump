@@ -153,6 +153,13 @@ var d = (function(){
     }
 
     /**
+     * Construct a timestamp string.
+     */
+    function timestamp() {
+        return (new Date()).toJSON().substr(11, 8);
+    }
+
+    /**
      * Convert an array of arguments to the space separated string.
      */
     function argsToString(args) {
@@ -370,7 +377,7 @@ var d = (function(){
             // Calculate prefix.
             var prefix = '';
             if (Dump.config.showTimestamp) {
-                prefix += (new Date()).toJSON().substr(11, 8) + ' ';
+                prefix += timestamp() + ' ';
             }
             if (Dump.config.showErrorLevel) {
                 prefix += level + ': ';
@@ -568,6 +575,16 @@ var d = (function(){
     };
     Dump.expect = function(callback) {
         return runTest(callback);
+    };
+
+    // Simple middleware for Express to show all requests with special color.
+    Dump.middleware = function() {
+        return function(req, resp, next) {
+            var line = '[' + req.ip + '] ' + req.method + ' ' + req.originalUrl;
+            var msg = new DumpMessage('INFO', null, 'message', '\u001b[33m' + timestamp() + ' ', [line]);
+            displayEngineNode(msg);
+            next();
+        }
     };
 
     return Dump;
