@@ -46,13 +46,13 @@ var d = (function(){
         this.displayFunction = displayEngine;
 
         try {
-            var test = module.id;
-        } catch(e)  {
+            var test2 = module.id;
+        } catch(e) {
             this.hasNode = false;
         }
 
         try {
-            var test2 = window.jasmine.Env;
+            var test3 = window.jasmine.Env;
         } catch(e) {
             this.hasJasmine = false;
         }
