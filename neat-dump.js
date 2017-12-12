@@ -94,8 +94,10 @@ var d = (function(){
         }
         var m;
         var msg = '';
+        if (arg instanceof Error) {
+            return arg.stack;
         // TODO: What if a = [1, 2, 3]; a[1] = a
-        if (arg instanceof Array) {
+        } else if (arg instanceof Array) {
             if (hasSeen(arg)) {
                 return '*recursion*';
             }
