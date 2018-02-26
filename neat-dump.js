@@ -67,6 +67,7 @@ var d = (function(){
             this.displayFunction = displayEngineNode;
             this.showTimestamp = true;
             this.showErrorLevel = true;
+            this.showSourceLine = false;
         }
     }
 
@@ -255,27 +256,27 @@ var d = (function(){
         switch (msg.level) {
             case level.DEBUG:
                 color = '\u001b[32m';
-                end = '\u001b[39m';
+                end = '\u001b[0m';
                 break;
             case level.INFO:
-                color = '\u001b[37m';
-                end = '\u001b[39m';
+                color = '\u001b[32m';
+                end = '\u001b[0m';
                 break;
             case level.WARNING:
                 color = '\u001b[35m';
-                end = '\u001b[39m';
+                end = '\u001b[0m';
                 break;
             case level.ERROR:
             case level.FATAL:
                 color = '\u001b[31m';
-                end = '\u001b[39m';
+                end = '\u001b[0m';
                 break;
             default:
                 break;
         }
         if (msg.type == 'line') {
                 color = '\u001b[1;30m';
-                end = '\u001b[39m';
+                end = '\u001b[0m';
         }
         console.log(color, prefix, text, end);
     }
