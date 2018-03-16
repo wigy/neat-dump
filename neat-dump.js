@@ -8,7 +8,16 @@ var d = (function(){
         INFO: "INFO",
         WARNING: "WARNING",
         ERROR: "ERROR",
-        FATAL: "FATAL"
+        FATAL: "FATAL",
+
+        RED: "RED",
+        GREEN: "GREEN",
+        BLUE: "BLUE",
+        YELLOW: "YELLOW",
+        PURPLE: "PURPLE",
+        CYAN: "CYAN",
+        WHITE: "WHITE",
+        ORANGE: "ORANGE"
     };
 
     /**
@@ -259,16 +268,39 @@ var d = (function(){
                 end = '\u001b[0m';
                 break;
             case level.INFO:
+            case level.GREEN:
                 color = '\u001b[32m';
                 end = '\u001b[0m';
                 break;
             case level.WARNING:
+            case level.PURPLE:
                 color = '\u001b[35m';
                 end = '\u001b[0m';
                 break;
             case level.ERROR:
             case level.FATAL:
+            case level.RED:
                 color = '\u001b[31m';
+                end = '\u001b[0m';
+                break;
+            case level.BLUE:
+                color = '\u001b[34m';
+                end = '\u001b[0m';
+                break;
+            case level.YELLOW:
+                color = '\u001b[33;1m';
+                end = '\u001b[0m';
+                break;
+            case level.CYAN:
+                color = '\u001b[36m';
+                end = '\u001b[0m';
+                break;
+            case level.WHITE:
+                color = '\u001b[37m';
+                end = '\u001b[0m';
+                break;
+            case level.ORANGE:
+                color = '\u001b[33m';
                 end = '\u001b[0m';
                 break;
             default:
@@ -278,7 +310,7 @@ var d = (function(){
                 color = '\u001b[1;30m';
                 end = '\u001b[0m';
         }
-        console.log(color, prefix, text, end);
+        console.log(color + prefix + text, end);
     }
 
     /**
@@ -578,6 +610,43 @@ var d = (function(){
     };
     Dump.expect = function(callback) {
         return runTest(callback);
+    };
+
+    function showInColor(color, args) {
+        var oldshowTimestamp = Dump.config.showTimestamp;
+        var showErrorLevel = Dump.config.showErrorLevel;
+        Dump.config.showTimestamp = false;
+        Dump.config.showErrorLevel = false;
+        var ret = display(color, args);
+        Dump.config.showTimestamp = oldshowTimestamp;
+        Dump.config.showErrorLevel = showErrorLevel;
+        return ret;
+    }
+
+    // Simple color prints.
+    Dump.red = function() {
+        showInColor(level.RED, Array.prototype.slice.call(arguments));
+    };
+    Dump.green = function() {
+        showInColor(level.GREEN, Array.prototype.slice.call(arguments));
+    };
+    Dump.blue = function() {
+        showInColor(level.BLUE, Array.prototype.slice.call(arguments));
+    };
+    Dump.purple = function() {
+        showInColor(level.PURPLE, Array.prototype.slice.call(arguments));
+    };
+    Dump.yellow = function() {
+        showInColor(level.YELLOW, Array.prototype.slice.call(arguments));
+    };
+    Dump.cyan = function() {
+        showInColor(level.CYAN, Array.prototype.slice.call(arguments));
+    };
+    Dump.white = function() {
+        showInColor(level.WHITE, Array.prototype.slice.call(arguments));
+    };
+    Dump.orange = function() {
+        showInColor(level.ORANGE, Array.prototype.slice.call(arguments));
     };
 
     // Simple middleware for Express to show all requests with special color.
